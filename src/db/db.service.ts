@@ -11,6 +11,8 @@ type Collection = keyof typeof database;
 
 @Injectable()
 export class DbService {
+  private _userId = database.users.length;
+
   findOne(collection: Collection, id: number) {
     return database[collection].find((item) => item.id === id);
   }
@@ -19,15 +21,16 @@ export class DbService {
     return database[collection];
   }
 
-  insertOne(collection: Collection, item: User) {
-    database[collection].push(item);
-    return item;
+  insertOne(collection: Collection, item: Omit<User, "id">): User {
+    const user = { id: this._userId++, ...item };
+    database[collection].push(user);
+    return user;
   }
 
-  updateOne(collection: Collection, id: number, item: User) {
+  updateOne(collection: Collection, id: number, item: Omit<User, "id">) {
     const index = database[collection].findIndex((item) => item.id === id);
-    database[collection][index] = item;
-    return item;
+    database[collection][index] = { id, ...item };
+    return database[collection][index];
   }
 
   deleteOne(collection: Collection, id: number) {

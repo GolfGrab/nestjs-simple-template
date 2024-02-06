@@ -17,5 +17,5 @@ export class User {
   password: string;
 
   @ApiProperty()
-  email: string;
+  email?: string;
 }
